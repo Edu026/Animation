@@ -59,6 +59,8 @@ public class AnimationScreen implements Screen {
 		background = new Texture(Gdx.files.internal("background.png"));
 		background.setWrap(Texture.TextureWrap.MirroredRepeat, Texture.TextureWrap.MirroredRepeat);
 		bgRegion = new TextureRegion(background);
+		posx = 0;
+		posy = 0;
 
 		// Use the split utility method to create a 2D array of TextureRegions. This is
 		// possible because this sprite sheet contains frames of equal size and they are
@@ -95,46 +97,53 @@ public class AnimationScreen implements Screen {
 		// Get current frame of animation for the current stateTime
 		TextureRegion currentFrame = walkAnimation.getKeyFrame(stateTime, false);
 
-		float bgSpeed = 5f; // Adjust this value to control the speed of background movement
-
 		switch (direction) {
 			case UP:
 				currentFrame = walkAnimation.getKeyFrame(stateTime, true);
-				scaleX = 1;
-				posx = posx;
-				posy = posy + 10;
+				posy += 10;
 				break;
 			case DOWN:
 				currentFrame = walkAnimation.getKeyFrame(stateTime, true);
-				posx = posx;
-				posy = posy - 10;
+				posy -= 10;
 				break;
 			case LEFT:
 				currentFrame = walkAnimation.getKeyFrame(stateTime, true);
 				scaleX = -1;
-				posx = posx - 10;
-				posy = posy;
+				posx -= 10;
 				break;
 			case RIGHT:
 				currentFrame = walkAnimation.getKeyFrame(stateTime, true);
-				posx = posx + 10;
-				posy = posy;
+				scaleX = 1;
+				posx += 10;
 				break;
 			default:
 				currentFrame = walkAnimation.getKeyFrame(0); // Default to idle animation
 				break;
 		}
 
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear screen
-		// Get current frame of animation for the current stateTime
-		// br
-		bgRegion.setRegion(posx,posy,game.SCR_WIDTH,game.SCR_HEIGHT);
+		// Clear screen
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		camera.update();
+
+
+		// Update background position to move with the player
+		bgRegion.setRegion(posx, posy, game.SCR_WIDTH, game.SCR_HEIGHT);
+
+		// Begin rendering
 		game.batch.begin();
-		game.batch.draw(bgRegion,posx,posy);
+
+		// Draw background
+		game.batch.draw(bgRegion, 0, 0, game.SCR_WIDTH, game.SCR_HEIGHT);
+
+		// Draw player centered on the screen
+		float playerX = (game.SCR_WIDTH - currentFrame.getRegionWidth()) / 2f;
+		float playerY = (game.SCR_HEIGHT - currentFrame.getRegionHeight()) / 2f;
 		game.batch.draw(currentFrame, posx, posy, 0, 0,
-				currentFrame.getRegionWidth(),currentFrame.getRegionHeight(),scaleX,1,0);
+				currentFrame.getRegionWidth()/2f,currentFrame.getRegionHeight()/2f,scaleX,1,0);
+		// End rendering
 		game.batch.end();
 	}
+
 
 
 	@Override
