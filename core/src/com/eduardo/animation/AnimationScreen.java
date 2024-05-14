@@ -133,7 +133,7 @@ public class AnimationScreen implements Screen {
 		game.batch.begin();
 
 		// Draw background
-		game.batch.draw(bgRegion, 0, 0, game.SCR_WIDTH, game.SCR_HEIGHT);
+		game.batch.draw(bgRegion, posx, posy, game.SCR_WIDTH, game.SCR_HEIGHT);
 
 		// Draw player centered on the screen
 		float playerX = (game.SCR_WIDTH - currentFrame.getRegionWidth()) / 2f;
